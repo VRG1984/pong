@@ -29,3 +29,5 @@ class Raqueta:
     def dibujar(self, pantalla):
         pg.draw.rect(pantalla, self.color, (self.center_x - self.w//2, self.center_y - self.h//2, self.w, self.h))
 
+
+    
