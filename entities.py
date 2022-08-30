@@ -1,4 +1,3 @@
-from tkinter import W
 import pygame as pg
 
 
@@ -29,9 +28,24 @@ class Bola:
             #Hacer un random en el eje y para que la bola salga con distinta inclinación
             self.vx *= -1
             self.vy *= -1
-        
 
+    @property #Para ahorrarte el paréntesis y hacer pasar el método por un atributo  
+    def izquierda(self):
+        return self.center_x - self.radio
     
+    @property
+    def derecha(self):
+        return self.center_x + self.radio
+    
+    @property
+    def arriba(self):
+        return self.center_y - self.radio
+    
+    @property
+    def abajo(self):
+        return self.center_y + self.radio
+    
+
 class Raqueta:
     def __init__(self, center_x, center_y, w=120, h=20, color=(255, 255, 0)):
         self.center_x = center_x
