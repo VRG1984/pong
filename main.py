@@ -11,7 +11,7 @@ game_over = False
 
 bola = Bola(400, 300, color=(255, 255, 255))
 bola.vx = 4
-bola.vy = -4
+bola.vy = 4
 raqueta1 = Raqueta(20, 300, w=20, h=120)
 raqueta2 = Raqueta(780, 300, w=20, h=120)
 raqueta2.vy = 3

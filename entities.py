@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 
 
 class Bola:
@@ -27,7 +28,7 @@ class Bola:
 
             #Hacer un random en el eje y para que la bola salga con distinta inclinación
             self.vx *= -1
-            self.vy *= -1
+            self.vy = random.randint(-4, -1)
 
     @property #Para ahorrarte el paréntesis y hacer pasar el método por un atributo  
     def izquierda(self):
@@ -47,7 +48,7 @@ class Bola:
     
 
 class Raqueta:
-    def __init__(self, center_x, center_y, w=120, h=20, color=(255, 255, 0)):
+    def __init__(self, center_x, center_y, w=20, h=120, color=(255, 255, 0)):
         self.center_x = center_x
         self.center_y = center_y
         self.color = color
@@ -71,5 +72,20 @@ class Raqueta:
             self.center_y += self.vy
         if self.center_y > y_max - self.h // 2:
             self.center_y = y_max - self.h // 2
+    
+    @property #Para ahorrarte el paréntesis y hacer pasar el método por un atributo  
+    def izquierda(self):
+        return self.center_x - self.w // 2
+    
+    @property
+    def derecha(self):
+        return self.center_x + self.w // 2    
+    @property
+    def arriba(self):
+        return self.center_y - self.h // 2
+    
+    @property
+    def abajo(self):
+        return self.center_y + self.h // 2
 
     
