@@ -37,6 +37,7 @@ while not game_over:
     raqueta2.mover(pg.K_UP, pg.K_DOWN)
     raqueta1.mover(pg.K_a, pg.K_z)
     bola.mover()
+    bola.comprobar_choque(raqueta1, raqueta2)
 
     pantalla_principal.fill((0, 0, 0))
     #Le pasa la info a la tarjeta gráfica y lo saca por pantalla
