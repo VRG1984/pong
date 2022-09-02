@@ -16,8 +16,6 @@ class Bola:
         pg.draw.circle(pantalla, self.color, (self.center_x, self.center_y), self.radio)
     
     def mover(self, x_max = 800, y_max = 600):
-        #self.raqueta1 = raqueta1
-        #self.raqueta2 = raqueta2
 
         self.center_x += self.vx
         self.center_y += self.vy
@@ -25,18 +23,22 @@ class Bola:
         if self.center_y >= y_max -self.radio or self.center_y < self.radio:
             self.vy = self.vy * -1
         
-        #Esto controla el movimiento de rebote de la bola con la raqueta. Básicamente, con las coordenadas de la pelota
-        #contrasto las coordenadas de posición de la raqueta. Va todo invertido (izquierda de la pelota contra derecha 
-        #de la raqueta, arriba de la pelota contra abajo de la raqueta y así...), me ha costado un mundo pero dibujándolo
-        #se entiende finalmente.
-        
-        if self.center_x >= x_max or self.center_x <= 0: #Se cuela por la dere
+        if self.center_x >= x_max:
             self.center_x = x_max // 2
             self.center_y = y_max // 2
-
-            #Hacer un random en el eje y para que la bola salga con distinta inclinación
             self.vx *= -1
             self.vy = random.randint(-4, -1)
+        
+            return "LEFT"
+
+        if self.center_x <= 0:
+            self.center_x = x_max // 2
+            self.center_y = y_max // 2
+            self.vx *= -1
+            self.vy = random.randint(-4, -1)
+        
+            return "RIGHT"
+
 
     def comprobar_choque(self, *raquetas):
         for raqueta_activa in raquetas:
@@ -47,24 +49,8 @@ class Bola:
                 self.abajo >= raqueta_activa.arriba:
                 
                     self.vx = self.vx * -1
-        
-    
-    """def mover(self, x_max = 800, y_max = 600):
-        self.center_x += self.vx
-        self.center_y += self.vy
 
-        if self.center_y >= y_max -self.radio or self.center_y < self.radio:
-            self.vy = self.vy * -1
-        
-        if self.center_x >= x_max or self.center_x <= 0: #Se cuela por la dere
-            self.center_x = x_max // 2
-            self.center_y = y_max // 2
-
-            #Hacer un random en el eje y para que la bola salga con distinta inclinación
-            self.vx *= -1
-            self.vy = random.randint(-4, -1)"""
-
-    @property #Para ahorrarte el paréntesis y hacer pasar el método por un atributo  
+    @property
     def izquierda(self):
         return self.center_x - self.radio
     
