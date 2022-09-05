@@ -1,6 +1,6 @@
 import pygame as pg
 from pong.entities import Bola, Raqueta
-from pong import ALTO, ANCHO, AMARILLO, BLANCO, NEGRO, FPS
+from pong import ALTO, ANCHO, AMARILLO, BLANCO, NARANJA, NEGRO, FPS, PRIMER_AVISO, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA; PRIMER_AVISO, SEGUNDO_AVISO
 
 pg.init()
 
@@ -9,6 +9,7 @@ class Partida:
         self.pantalla_principal = pg.display.set_mode((ANCHO, ALTO))
         pg.display.set_caption("Pong")
         self.cronometro = pg.time.Clock()
+        self.cronometro_p = TIEMPO_MAXIMO_PARTIDA
 
         self.bola = Bola(ANCHO // 2, ALTO //2, color = BLANCO)
         self.raqueta1 = Raqueta(20, ALTO // 2, w=20, h=120, color = AMARILLO)
@@ -20,16 +21,28 @@ class Partida:
         self.puntuacion2 = 0
 
         self.fuenteMarcador = pg.font.Font("pong/fonts/Silkscreen.ttf", 40)
-
+        self.fuenteCronometro_p = pg.font.Font("pong/fonts/Silkscreen.ttf", 20)
     
+        self.colorFondo = NEGRO
+    
+    def fijar_fondo(self):
+        if self.cronometro_p > PRIMER_AVISO:
+                self.pantalla_principal.fill(NEGRO)
+        elif self.cronometro_p > SEGUNDO_AVISO:
+                self.pantalla_principal.fill(NARANJA)
+        else:
+                self.pantalla_principal.fill(ROJO)
+
     def bucle_ppal(self):
         self.bola.vx = 5
         self.bola.vy = -5
         
         game_over = False
 
-        while not game_over and self.puntuacion1 < 10 and self.puntuacion2 < 10:
-            self.cronometro.tick(FPS)
+        while not game_over and self.puntuacion1 < 10 and self.puntuacion2 < 10 and self.cronometro_p > 1:
+            salto_tiempo = self.cronometro.tick(FPS)
+            self.cronometro_p -= salto_tiempo
+
         #1000 milisegundos/60 fps = 16 ms entre un fotograma y otro
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
@@ -48,7 +61,8 @@ class Partida:
             
             self.bola.comprobar_choque(self.raqueta1, self.raqueta2)
 
-            self.pantalla_principal.fill(NEGRO)
+            self.fijar_fondo()
+
         #Le pasa la info a la tarjeta gráfica y lo saca por pantalla
             self.bola.dibujar(self.pantalla_principal)
             self.raqueta1.dibujar(self.pantalla_principal)
@@ -59,5 +73,8 @@ class Partida:
 
             p2 = self.fuenteMarcador.render(str(self.puntuacion2), True, BLANCO)
             self.pantalla_principal.blit(p2, (740,10))
+
+            crono = self.fuenteCronometro_p.render(str(self.cronometro_p // 1000), True, BLANCO)
+            self.pantalla_principal.blit(crono, (ANCHO // 2, 10))
         
             pg.display.flip()
