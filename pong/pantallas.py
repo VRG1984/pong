@@ -1,14 +1,15 @@
+from pickle import FALSE
 import pygame as pg
 from pong.entities import Bola, Raqueta
-from pong import ALTO, ANCHO, AMARILLO, BLANCO, NARANJA, NEGRO, FPS, PRIMER_AVISO, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA; PRIMER_AVISO, SEGUNDO_AVISO
+from pong import ALTO, ANCHO, AMARILLO, BLANCO, MAGENTA, NARANJA, NEGRO, FPS, PRIMER_AVISO, PUNTUACION_GANADORA, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA; PRIMER_AVISO, SEGUNDO_AVISO
 
 pg.init()
 
 class Partida:
-    def __init__(self):
-        self.pantalla_principal = pg.display.set_mode((ANCHO, ALTO))
+    def __init__(self, pantalla, cronometro):
+        self.pantalla_principal = pantalla
         pg.display.set_caption("Pong")
-        self.cronometro = pg.time.Clock()
+        self.cronometro = cronometro
         self.cronometro_p = TIEMPO_MAXIMO_PARTIDA
 
         self.bola = Bola(ANCHO // 2, ALTO //2, color = BLANCO)
@@ -22,31 +23,51 @@ class Partida:
 
         self.fuenteMarcador = pg.font.Font("pong/fonts/Silkscreen.ttf", 40)
         self.fuenteCronometro_p = pg.font.Font("pong/fonts/Silkscreen.ttf", 20)
+
+        self.contadorFotogramas = 0
     
         self.colorFondo = NEGRO
     
     def fijar_fondo(self):
+        self.contadorFotogramas += 1
+
         if self.cronometro_p > PRIMER_AVISO:
-                self.pantalla_principal.fill(NEGRO)
+            self.contadorFotogramas = 0
+            return NEGRO
         elif self.cronometro_p > SEGUNDO_AVISO:
-                self.pantalla_principal.fill(NARANJA)
+            if self.contadorFotogramas == 10:
+                if self.colorFondo == NEGRO:
+                    self.colorFondo = NARANJA
+                else:
+                    self.colorFondo = NEGRO
+                self.contadorFotogramas = 0
         else:
-                self.pantalla_principal.fill(ROJO)
+            if self.contadorFotogramas == 5:
+                if self.colorFondo == ROJO:
+                    self.colorFondo = NEGRO
+                else:
+                    self.colorFondo = ROJO
+                self.contadorFotogramas = 0
+        
+        return self.colorFondo
 
     def bucle_ppal(self):
         self.bola.vx = 5
         self.bola.vy = -5
+        self.puntuacion1 = 0
+        self.puntuacion2 = 0
+        self.cronometro_p = TIEMPO_MAXIMO_PARTIDA
         
         game_over = False
-
-        while not game_over and self.puntuacion1 < 10 and self.puntuacion2 < 10 and self.cronometro_p > 1:
+        self.cronometro.tick()
+        while not game_over and self.puntuacion1 < PUNTUACION_GANADORA and self.puntuacion2 < PUNTUACION_GANADORA and self.cronometro_p > 1:
             salto_tiempo = self.cronometro.tick(FPS)
             self.cronometro_p -= salto_tiempo
 
         #1000 milisegundos/60 fps = 16 ms entre un fotograma y otro
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    game_over = True
+                    return True
         
             self.raqueta2.mover(pg.K_UP, pg.K_DOWN)
             self.raqueta1.mover(pg.K_a, pg.K_z)
@@ -61,7 +82,7 @@ class Partida:
             
             self.bola.comprobar_choque(self.raqueta1, self.raqueta2)
 
-            self.fijar_fondo()
+            self.pantalla_principal.fill(self.fijar_fondo())
 
         #Le pasa la info a la tarjeta gráfica y lo saca por pantalla
             self.bola.dibujar(self.pantalla_principal)
@@ -78,3 +99,29 @@ class Partida:
             self.pantalla_principal.blit(crono, (ANCHO // 2, 10))
         
             pg.display.flip()
+
+class Menu:
+    def __init__(self, pantalla, cronometro):
+        self.pantalla_principal = pantalla
+        pg.display.set_caption("Menú")
+        self.cronometro = cronometro
+        self.imagenFondo = pg.image.load("pong/images/portada.jpeg")
+        self.fuenteComenzar = pg.font.Font("pong/fonts/Silkscreen.ttf", 50)
+
+    def bucle_ppal(self):
+        game_over = False
+
+        while not game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    return True
+
+                if evento.type == pg.KEYDOWN:
+                    if evento.key == pg.K_RETURN:
+                        game_over = True
+
+            self.pantalla_principal.blit(self.imagenFondo, (0,0))
+            menu = self.fuenteComenzar.render("Pulsa ENTER para comenzar", True, MAGENTA)
+            self.pantalla_principal.blit(menu, (ANCHO // 2, ALTO - 200))
+            pg.display.flip()
+

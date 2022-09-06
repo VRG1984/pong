@@ -1,4 +1,4 @@
-from pong.pantallas import Partida
+from pong.juego import Controlador
 
-juego = Partida()
-juego.bucle_ppal()
+juego = Controlador()
+juego.jugar()
