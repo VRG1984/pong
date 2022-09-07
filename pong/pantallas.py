@@ -1,7 +1,6 @@
-from pickle import FALSE
 import pygame as pg
 from pong.entities import Bola, Raqueta
-from pong import ALTO, ANCHO, AMARILLO, BLANCO, MAGENTA, NARANJA, NEGRO, FPS, PRIMER_AVISO, PUNTUACION_GANADORA, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA; PRIMER_AVISO, SEGUNDO_AVISO
+from pong import ALTO, ANCHO, AMARILLO, BLANCO, MAGENTA, NARANJA, NEGRO, FPS, PRIMER_AVISO, PUNTUACION_GANADORA, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA, PRIMER_AVISO, SEGUNDO_AVISO
 
 pg.init()
 
@@ -13,9 +12,10 @@ class Partida:
         self.cronometro_p = TIEMPO_MAXIMO_PARTIDA
 
         self.bola = Bola(ANCHO // 2, ALTO //2, color = BLANCO)
-        self.raqueta1 = Raqueta(20, ALTO // 2, w=20, h=120, color = AMARILLO)
+        self.raqueta1 = Raqueta(20, ALTO // 2, w=30, h=114, color = AMARILLO)
         self.raqueta1.vy = 5
-        self.raqueta2 = Raqueta(ANCHO - 20, ALTO // 2, w=20, h=120, color = AMARILLO)
+        self.raqueta2 = Raqueta(ANCHO - 20, ALTO // 2, w=30, h=114, color = AMARILLO)
+        self.raqueta2.imagen = "drcha"
         self.raqueta2.vy = 5
         
         self.puntuacion1 = 0
@@ -63,7 +63,6 @@ class Partida:
         while not game_over and self.puntuacion1 < PUNTUACION_GANADORA and self.puntuacion2 < PUNTUACION_GANADORA and self.cronometro_p > 1:
             salto_tiempo = self.cronometro.tick(FPS)
             self.cronometro_p -= salto_tiempo
-
         #1000 milisegundos/60 fps = 16 ms entre un fotograma y otro
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:

@@ -8,6 +8,9 @@ class Bola:
         self.center_y = center_y
         self.radio = radio
         self.color = color
+
+        # El "self." + "" es como vas a llamar tú al atributo/variable de cada objeto.
+        # Lo normal es que el "" coincida con los nombres de los atributos/variables inicializadores del init, pero pueden ser distintos.
     
         self.vx = 0
         self.vy = 0
@@ -22,6 +25,8 @@ class Bola:
 
         if self.center_y >= y_max -self.radio or self.center_y < self.radio:
             self.vy = self.vy * -1
+        
+        # Funcionamiento de rebotes arriba y abajo
         
         if self.center_x >= x_max:
             self.center_x = x_max // 2
@@ -38,7 +43,8 @@ class Bola:
             self.vy = random.randint(-4, -1)
         
             return "RIGHT"
-
+        
+        # Funcionamiento de goles
 
     def comprobar_choque(self, *raquetas):
         for raqueta_activa in raquetas:
@@ -68,6 +74,11 @@ class Bola:
     
 
 class Raqueta:
+    imagenes = {
+        "izqda": "electric00.png",
+        "drcha": "electric00d.png"
+    }
+    
     def __init__(self, center_x, center_y, w=20, h=120, color=(255, 255, 0)):
         self.center_x = center_x
         self.center_y = center_y
@@ -78,11 +89,25 @@ class Raqueta:
         self.vx = 0
         self.vy = 0
 
+        self._imagen = pg.image.load(f"pong/images/{self.imagenes['izqda']}")
+    
+    @property
+    def imagen(self):
+        return self._imagen
+    
+    @imagen.setter
+    def imagen(self, valor):
+        self._imagen = pg.image.load(f"pong/images/{self.imagenes[valor]}")
+
+
     def dibujar(self, pantalla):
-        pg.draw.rect(pantalla, self.color, (self.center_x - self.w//2, self.center_y - self.h//2, self.w, self.h))
+        # pg.draw.rect(pantalla, self.color, (self.center_x - self.w//2, self.center_y - self.h//2, self.w, self.h))
+        pantalla.blit(self.imagen, (self.center_x - self.w//2, self.center_y - self.h//2, self.w, self.h))
 
     def mover(self, tecla_arriba, tecla_abajo, y_max=600):
         estado_teclas = pg.key.get_pressed()
+        # Este método devuelve una lista con las teclas pulsadas (¿diccionario de todas las teclas con "True-False"?)
+
         if estado_teclas[tecla_arriba]: #Movimiento hacia arriba
             self.center_y -= self.vy
         if self.center_y < self.h // 2:
